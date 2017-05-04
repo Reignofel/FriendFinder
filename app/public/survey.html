@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Friend Finder - Survey</title>
+
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+</head>
+<BODY>
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12">
+            <h1>Friend Finder</h1>
+            <p>Answer a few basic questions.</p>
+            <p>Then find the friend with the greatest compatibility!</p>
+      
+            <label for="name">Name</label> 
+            <input placeholder="Name" id="name" type="text" ><br/>
+            
+            <label for="profilepic">Picture</label>
+            <input placeholder="URL of picture" id="profilepic" type="text"></br>
+
+            <p><strong>Do you love food?</strong></p>
+            <select id = "q1">
+              <option value="" disabled selected>Choose your option</option>
+              <option value="1"> 1 (Strongly Disagree) </option>
+              <option value="2"> 2</option>
+              <option value="3"> 3</option>
+              <option value="4"> 4</option>
+              <option value="5"> 5 (Strongly Agree)</option>
+            </select>
+       
+            <p><strong>Do you have a bad temper?</strong></p>
+            <select id = "q2">
+              <option value="" disabled selected>Choose your option</option>
+              <option value="1"> 1 (Strongly Disagree) </option>
+              <option value="2"> 2</option>
+              <option value="3"> 3</option>
+              <option value="4"> 4</option>
+              <option value="5"> 5 (Strongly Agree)</option>
+            </select>
+
+            <p><strong>Do you consider yourself family oriented?</strong></p>
+            <select id = "q3">
+              <option value="" disabled selected>Choose your option</option>
+              <option value="1"> 1 (Strongly Disagree) </option>
+              <option value="2"> 2</option>
+              <option value="3"> 3</option>
+              <option value="4"> 4</option>
+              <option value="5"> 5 (Strongly Agree)</option>
+            </select>
+
+            <p><strong>Do you enjoy wine?</strong></p>
+            <select id = "q4">
+              <option value="" disabled selected>Choose your option</option>
+              <option value="1"> 1 (Strongly Disagree) </option>
+              <option value="2"> 2</option>
+              <option value="3"> 3</option>
+              <option value="4"> 4</option>
+              <option value="5"> 5 (Strongly Agree)</option>
+            </select>
+
+            <p><strong>Do you like to go travel?</strong></p>
+            <select id = "q5">
+              <option value="" disabled selected>Choose your option</option>
+              <option value="1"> 1 (Strongly Disagree) </option>
+              <option value="2"> 2</option>
+              <option value="3"> 3</option>
+              <option value="4"> 4</option>
+              <option value="5"> 5 (Strongly Agree)</option>
+            </select>
+
+            <a id="submit">Submit</a>
+          </div>
+        </div>
+      </div>
+
+  </BODY>
+</HTML>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+   
+  $("#submit").on("click", function(){
+    var isValid = true;
+    var nameV = $("#name").val().trim();
+    var pictureV = $("#prodilepic").val().trim();
+
+    if (!nameV || !pictureV) {
+      isValid = false;
+    }
+    
+    var newFriend = {
+      name: nameV,
+      picture: pictureV,
+      scores:[]
+    }
+   
+   
+    for (var i=0; i<10; i++) {
+      var ans = $("#qus"+(i+1)).val();
+      
+      if (!ans) {
+          isValid = false;
+        } else {
+          newFriend.scores.push(ans);
+      }
+    }
+
+    if (!isValid) {
+      alert("All fieldss are required");
+      return false;
+    }
+
+    var currentURL = window.location.origin;
+        $.post(currentURL + "/api/friend", newFriend, function(data) {
+          var imgTag = $('<img>');
+          imgTag.addClass('picture');
+          imgTag.attr('src',data.photo);
+          console.log(imgTag.src + ""+ data.photo)
+          var nametag = $("#modalFriendName");
+          nametag.text(data.name);
+          nametag.append('<br>')
+          console.log(imgTag);
+          $("#modalFriendName").append(imgTag);
+
+          console.log(data.name + JSON.stringify($("#modalFriendName")));
+          $('.modal').openModal();
+        });
+  });
+});
